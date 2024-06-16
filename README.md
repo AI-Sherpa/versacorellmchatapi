@@ -6,10 +6,11 @@ A Python library for interacting with VersaCore LLM Chat API.
 
 ```bash
 pip install versacorellmchatapi
+```
 
 ## Usage
 
-```
+```bash
 from versacorellmchatapi.api import VersaCoreLLMChatAPI
 
 llm_api = VersaCoreLLMChatAPI("ollama")
