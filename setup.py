@@ -6,8 +6,8 @@ setup(
     description="A Python library for interacting with the VersaCore LLM Chat API.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Jansen Tang",
+    author_email="jansen.tang@ai-sherpa.io",
     url="https://github.com/AI-Sherpa/versacorellmchatapi",
     packages=find_packages(),
     install_requires=[

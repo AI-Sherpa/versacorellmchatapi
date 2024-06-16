@@ -18,6 +18,6 @@ messages = [
     {"role": "user", "content": "why is the sky blue?"}
 ]
 response = llm_api.chat_completions(messages, model="mistral", temperature=0.7, max_tokens=50, stream=False)
-print(response)
+print(response['message']['content'])
 
 ```
