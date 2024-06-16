@@ -12,7 +12,7 @@ class VersaCoreLLMChatAPI:
 
     def _get_base_url(self, api_identifier):
         base_url_mapping = {
-            "lmstudio": "http://localhost:1234",
+            "lmstudio": "http://localhost:1234/v1/chat/completions",
             "ollama": "http://localhost:11434/api/chat"
             # Add more mappings as needed
         }
