@@ -11,7 +11,7 @@ class TestVersaCoreLLMChatAPI(unittest.TestCase):
         messages = [
             {"role": "user", "content": "why is the sky blue?"}
         ]
-        response = api.chat_completions(messages, stream=False)
+        response = api.chat_completions(messages, model="mistral", stream=False)
         self.assertIsNotNone(response)
 
 if __name__ == '__main__':
