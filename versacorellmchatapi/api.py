@@ -7,7 +7,7 @@ class VersaCoreLLMChatAPI:
     def __init__(self, api_identifier, retry_attempts=3):
         self.base_url = self._get_base_url(api_identifier)
         self.retry_attempts = retry_attempts
-        self.default_model = "llama3"
+        self.default_model = "MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF/Mistral-7B-Instruct-v0.3-Q5_K_M.gguf"
         logging.basicConfig(level=logging.INFO)
 
     def _get_base_url(self, api_identifier):
@@ -16,7 +16,7 @@ class VersaCoreLLMChatAPI:
             "ollama": "http://localhost:11434/api/chat"
             # Add more mappings as needed
         }
-        return base_url_mapping.get(api_identifier, "http://localhost:1234")
+        return base_url_mapping.get(api_identifier, "http://localhost:1234/v1/chat/completions")
 
     def _make_request(self, url, headers, payload):
         attempt = 0
@@ -54,6 +54,18 @@ class VersaCoreLLMChatAPI:
                     if line:
                         print(json.loads(line))
             else:
-                return response.json()
+                response_json = response.json()
+                # Extract and print the content field
+                content = response_json['choices'][0]['message']['content']
+                return content
         except RequestException as e:
             logging.error(f"Failed to get a response: {e}")
+
+# Usage example
+if __name__ == "__main__":
+    llm_api = VersaCoreLLMChatAPI("lmstudio")
+    messages = [
+        { "role": "system", "content": "Always answer in rhymes." },
+        { "role": "user", "content": "Introduce yourself." }
+    ]
+    response = llm_api.chat_completions(messages, model="MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF/Mistral-7B-Instruct-v0.3-Q5_K_M.gguf", temperature=0.7, max_tokens=-1, stream=False)
