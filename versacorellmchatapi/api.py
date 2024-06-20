@@ -99,7 +99,7 @@ class VersaCoreLLMChatAPI:
             if stream:
                 return self._handle_lmstudio_streaming_response(completion, callback)
             else:
-                return completion.choices[0].message['content']
+                return completion.choices[0].message
         except Exception as e:
             logging.error(f"Failed to get a response from lmstudio: {e}")
 
