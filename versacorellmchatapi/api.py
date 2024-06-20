@@ -113,6 +113,8 @@ class VersaCoreLLMChatAPI:
                 content += chunk_content
             # else:
             #     logging.warning("Received None content in chunk")
+        if callback:
+            callback('', end=True)
         return content
 
     def _handle_streaming_response(self, response, callback=None):
@@ -134,16 +136,20 @@ class VersaCoreLLMChatAPI:
                         #     logging.warning("Received None content in stream line")
                 except json.JSONDecodeError as e:
                     logging.warning(f"Failed to decode line: {decoded_line} - Error: {e}")
+        if callback:
+            callback('', end=True)
         return content
 
 
 # Usage example
 if __name__ == "__main__":
 
-    def handle_chunk(chunk):
+    def handle_chunk(chunk, end=False):
         # Custom handling of each chunk
         if chunk:
             print(chunk, end='', flush=True)
+        if end:
+            print()  # Print a newline at the end of the stream
 
     lm_studio_llm_api = VersaCoreLLMChatAPI("lmstudio")
     ollama_llm_api = VersaCoreLLMChatAPI("ollama")
