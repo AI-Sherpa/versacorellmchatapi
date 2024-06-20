@@ -92,10 +92,10 @@ class VersaCoreLLMChatAPI:
     def _lmstudio_chat_completions(self, messages, model, temperature, max_tokens, stream, callback, **kwargs):
         try:
             completion = client.chat.completions.create(model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stream=stream)
+                                                            messages=messages,
+                                                            temperature=temperature,
+                                                            max_tokens=max_tokens,
+                                                            stream=stream)
             if stream:
                 return self._handle_lmstudio_streaming_response(completion, callback)
             else:
@@ -107,9 +107,12 @@ class VersaCoreLLMChatAPI:
         content = ""
         for chunk in response:
             chunk_content = chunk.choices[0].delta.content
-            if callback:
-                callback(chunk_content)
-            content += chunk_content
+            if chunk_content is not None:
+                if callback:
+                    callback(chunk_content)
+                content += chunk_content
+            # else:
+            #     logging.warning("Received None content in chunk")
         return content
 
     def _handle_streaming_response(self, response, callback=None):
@@ -123,9 +126,12 @@ class VersaCoreLLMChatAPI:
                     json_line = json.loads(decoded_line)
                     if 'message' in json_line and 'content' in json_line['message']:
                         chunk = json_line['message']['content']
-                        if callback:
-                            callback(chunk)
-                        content += chunk
+                        if chunk is not None:
+                            if callback:
+                                callback(chunk)
+                            content += chunk
+                        # else:
+                        #     logging.warning("Received None content in stream line")
                 except json.JSONDecodeError as e:
                     logging.warning(f"Failed to decode line: {decoded_line} - Error: {e}")
         return content
@@ -136,7 +142,8 @@ if __name__ == "__main__":
 
     def handle_chunk(chunk):
         # Custom handling of each chunk
-        print(chunk, end='', flush=True)
+        if chunk:
+            print(chunk, end='', flush=True)
 
     lm_studio_llm_api = VersaCoreLLMChatAPI("lmstudio")
     ollama_llm_api = VersaCoreLLMChatAPI("ollama")
@@ -146,21 +153,21 @@ if __name__ == "__main__":
         { "role": "user", "content": "Introduce yourself." }
     ]
     
-    # lm_studio_response = lm_studio_llm_api.chat_completions(
-    #     messages, 
-    #     model="lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF", 
-    #     temperature=0.7, 
-    #     max_tokens=-1, 
-    #     stream=True,
-    #     callback=handle_chunk    
-    # )
-
-    ollama_response = ollama_llm_api.chat_completions(
-        messages,
-        model="mistral", 
+    lm_studio_response = lm_studio_llm_api.chat_completions(
+        messages, 
+        model="lmstudio-community/Mistral-7B-Instruct-v0.3-GGUF", 
+        temperature=0.7, 
+        max_tokens=-1, 
         stream=True,
-        callback=handle_chunk  # Use the custom callback to handle streaming chunks
+        callback=handle_chunk    
     )
+
+    # ollama_response = ollama_llm_api.chat_completions(
+    #     messages,
+    #     model="mistral", 
+    #     stream=True,
+    #     callback=handle_chunk  # Use the custom callback to handle streaming chunks
+    # )
 
     # if lm_studio_response:
     #     print("lm_studio_response:", lm_studio_response)
